@@ -1,10 +1,10 @@
-﻿using System.IO.Compression;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO.Compression;
 using System.Reflection;
 
 [assembly: AssemblyTitleAttribute("ForetrexToolbox")]
 [assembly: AssemblyCompanyAttribute("Not Sure")]
 [assembly: AssemblyProductAttribute("ForetrexToolbox")]
-
 
 namespace ForetrexToolbox
 {
@@ -84,10 +84,42 @@ namespace ForetrexToolbox
           return "Unknown";
       }
     }
+
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
     static void Main(string[] args)
     {
       if( args.Length > 1 && args[0].Equals("airports", StringComparison.OrdinalIgnoreCase))
       {
+        List<string> selectedAirports = new List<string>();
+        List<string> selectedContinents = new List<string>();
+        FileInfo? output = null;
+        foreach (string arg in args)
+        {
+          if (arg.StartsWith("--airports=", StringComparison.OrdinalIgnoreCase))
+          {
+            string[] items = arg.Substring(11).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string item in items)
+            {
+              selectedAirports.Add(item);
+            }
+          }
+          if ( arg.StartsWith("--continents=", StringComparison.OrdinalIgnoreCase))
+          {
+            string[] items = arg.Substring(13).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach(string item in items)
+            {
+              selectedContinents.Add(item);
+            }
+          }
+          if (arg.StartsWith("--output=", StringComparison.OrdinalIgnoreCase))
+          {
+            output = new FileInfo(arg.Substring(9));
+          }
+        }
+        Airports airports = new Airports(400, selectedAirports, selectedContinents);
+        GpxData data = GpxData.FromList(airports.WayPoints);
+        data.ToFile(output);
+        Console.WriteLine( "Saved " + airports.WayPoints.Count + " airports to file " + output!.Name);
         return;
       }
       if (args.Length == 1 && args[0].Equals("version", StringComparison.OrdinalIgnoreCase))

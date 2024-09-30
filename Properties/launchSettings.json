@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "version": {
+      "commandName": "Project",
+      "commandLineArgs": "version"
+    },
+    "deploy": {
+      "commandName": "Project",
+      "commandLineArgs": "deploy\r\n"
+    }
+  }
+}

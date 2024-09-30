@@ -15,6 +15,9 @@ namespace ForetrexToolbox
       Console.WriteLine(string.Format("ForetrexToolbox.exe <command> ..."));
       Console.WriteLine(string.Format("Commands:"));
       Console.WriteLine(string.Format("   airports"));
+      Console.WriteLine(string.Format("       --type=<comma seperated list, e.g.:small,medium,large>"));
+      Console.WriteLine(string.Format("       --continents=<comma seperated list, e.g.:EU,NA>"));
+      Console.WriteLine(string.Format("       --output=<gpx file>"));
       Console.WriteLine(string.Format("Utility commands:"));
       Console.WriteLine(string.Format("   version"));
       Console.WriteLine(string.Format("   deploy"));
@@ -95,7 +98,7 @@ namespace ForetrexToolbox
         FileInfo? output = null;
         foreach (string arg in args)
         {
-          if (arg.StartsWith("--airports=", StringComparison.OrdinalIgnoreCase))
+          if (arg.StartsWith("--type=", StringComparison.OrdinalIgnoreCase))
           {
             string[] items = arg.Substring(11).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string item in items)

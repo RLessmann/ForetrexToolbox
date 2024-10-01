@@ -8,15 +8,7 @@
       "commandName": "Project",
       "commandLineArgs": "deploy"
     },
-    "airports 1": {
-      "commandName": "Project",
-      "commandLineArgs": "airports"
-    },
-    "airports 2": {
-      "commandName": "Project",
-      "commandLineArgs": "airports --types=large"
-    },
-    "airports 3": {
+    "airports": {
       "commandName": "Project",
       "commandLineArgs": "airports --types=large --continents=EU,NA --output=airports.gpx"
     },

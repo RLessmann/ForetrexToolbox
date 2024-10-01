@@ -1,4 +1,5 @@
 ﻿using ForetrexToolbox.AIR;
+using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
@@ -7,6 +8,8 @@ namespace ForetrexToolbox.KML
   internal class KmlTracks
   {
     private List<List<KmlPoint>> _tracks = new List<List<KmlPoint>>();
+    private double _angle = double.Parse(ConfigurationManager.AppSettings["ThinoutAngle"] ?? "0.5", CultureInfo.InvariantCulture);
+    private int _strike = int.Parse(ConfigurationManager.AppSettings["ThinoutStrike"] ?? "10", CultureInfo.InvariantCulture);
 
     [RequiresUnreferencedCode("Calls ForetrexToolbox.Serializer<T>.Deserialize(String)")]
     public KmlTracks(FileInfo? fi)
@@ -29,8 +32,8 @@ namespace ForetrexToolbox.KML
               for (int j = 0; j < values.Length - 3; j += 3)
               {
                 string nam = string.Format(CultureInfo.InvariantCulture, "{0:0}{1:000}", i + 1, (j / 3) + 1);
-                double lat = double.Parse(values[j], CultureInfo.InvariantCulture);
-                double lon = double.Parse(values[j + 1], CultureInfo.InvariantCulture);
+                double lon = double.Parse(values[j], CultureInfo.InvariantCulture);
+                double lat = double.Parse(values[j + 1], CultureInfo.InvariantCulture);
                 double ele = double.Parse(values[j + 2], CultureInfo.InvariantCulture);
                 pnts.Add(new KmlPoint(nam, lat, lon, ele));
               }
@@ -68,6 +71,39 @@ namespace ForetrexToolbox.KML
           }
         }
         return lst;
+      }
+    }
+
+    public void Thinout()
+    {
+      foreach (List<KmlPoint> track in _tracks)
+      {
+        List<double> directions = new List<double>();
+        int strike = 0;
+        int removed = 0;
+        for (int i = 1; i < track.Count; i++)
+        {
+          directions.Add((track[i].Longitude - track[i - 1].Longitude) / (track[i].Latitude - track[i - 1].Latitude));
+        }
+        for (int i=directions.Count-3; i >=0; i--)
+        {
+          if (Math.Abs(directions[i] - directions[i+1]) < _angle)
+          {
+            if (removed - i == 2)
+            {
+              strike++;
+            }
+            if (strike < _strike)
+            {
+              track.RemoveAt(i + 1);
+              removed = i + 1;
+            }
+            else
+            {
+              strike = 0;
+            }
+          }
+        }
       }
     }
   }

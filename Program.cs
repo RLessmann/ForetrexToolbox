@@ -142,6 +142,7 @@ namespace ForetrexToolbox
         if (input != null)
         {
           KmlTracks track = new KmlTracks(input);
+          track.Thinout();
           List<List<Gpx10.gpxRteRtept>> routes = track.Routes;
           for (int i = 0; i < routes.Count; i++)
           {

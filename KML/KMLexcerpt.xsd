@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://www.opengis.net/kml/2.2"
+  targetNamespace="http://www.opengis.net/kml/2.2"
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+
+  <xs:complexType name="lineStringType">
+    <xs:sequence>
+      <xs:element name="coordinates" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="placemarkType">
+    <xs:sequence>
+      <xs:element name="LineString" type ="lineStringType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="documentType">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="description" type="xs:string"/>
+      <xs:element name="Placemark" type="placemarkType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="kmlType">
+    <xs:sequence>
+      <xs:element name="Document" type ="documentType"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:element name="kml" type="kmlType"/>
+  
+</xs:schema>

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 
-namespace ForetrexToolbox
+namespace ForetrexToolbox.AIR
 {
   class Airports : SortedList<double, Airport>, IDisposable
   {
@@ -26,8 +26,8 @@ namespace ForetrexToolbox
       {
         _selectedContinents.Add(ConfigurationManager.AppSettings["Continent"] ?? "");
       }
-      _lat = Double.Parse(ConfigurationManager.AppSettings["HomeLatitude"] ?? "0.00", CultureInfo.InvariantCulture); 
-      _lon = Double.Parse(ConfigurationManager.AppSettings["HomeLongitude"] ?? "0.00", CultureInfo.InvariantCulture);
+      _lat = double.Parse(ConfigurationManager.AppSettings["HomeLatitude"] ?? "0.00", CultureInfo.InvariantCulture); 
+      _lon = double.Parse(ConfigurationManager.AppSettings["HomeLongitude"] ?? "0.00", CultureInfo.InvariantCulture);
       SelectAirports();
     }
     public void Dispose()
@@ -108,9 +108,9 @@ namespace ForetrexToolbox
               {
                 string name = parts[3].Trim(new char[] { '\"' });
                 string iata = parts[13].Trim(new char[] { '\"' });
-                double lat = Double.Parse(parts[4], CultureInfo.InvariantCulture);
-                double lon = Double.Parse(parts[5], CultureInfo.InvariantCulture);
-                double ele = String.IsNullOrEmpty(parts[6]) ? 0 : Double.Parse(parts[6], CultureInfo.InvariantCulture);
+                double lat = double.Parse(parts[4], CultureInfo.InvariantCulture);
+                double lon = double.Parse(parts[5], CultureInfo.InvariantCulture);
+                double ele = string.IsNullOrEmpty(parts[6]) ? 0 : double.Parse(parts[6], CultureInfo.InvariantCulture);
                 double distance = Math.Sqrt(Math.Pow(_lat - lat, 2) + Math.Pow(_lon - lon, 2));
                 if (!string.IsNullOrEmpty(iata))
                 {

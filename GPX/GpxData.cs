@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace ForetrexToolbox
+namespace ForetrexToolbox.GPX
 {
   class GpxData
   {
@@ -10,77 +10,15 @@ namespace ForetrexToolbox
       v10,
       v11,
     };
-    private Gpx10.gpx? _gpx10;
-    private Gpx11.gpxType? _gpx11;
+    protected Gpx10.gpx? _gpx10;
+    protected Gpx11.gpxType? _gpx11;
 
     protected GpxData()
     {
-      // protected constructor, use FromFile() instead
     }
 
     #region public methods
-    [RequiresUnreferencedCode("Calls ForetrexToolbox.GpxSerializer<T>.DeserializeStream(Stream)")]
-    public static GpxData FromFile(FileInfo fi, GPXVersion ver)
-    {
-      GpxData gpxData = new GpxData();
-      switch (ver)
-      {
-        case GPXVersion.v10:
-          GpxSerializer<Gpx10.gpx> serializer10 = new GpxSerializer<Gpx10.gpx>();
-          gpxData._gpx10 = serializer10.DeserializeStream(fi.Open(FileMode.Open, FileAccess.Read, FileShare.Read));
-          break;
-        case GPXVersion.v11:
-          GpxSerializer<Gpx11.gpxType> serializer11 = new GpxSerializer<Gpx11.gpxType>();
-          gpxData._gpx11 = serializer11.DeserializeStream(fi.Open(FileMode.Open, FileAccess.Read, FileShare.Read));
-          break;
-        default:
-          throw new ArgumentException("Unsupported GPX Version");
-      }
-      return gpxData;
-    }
-    public static GpxData FromList( List<Gpx10.gpxWpt> lst)
-    {
-      GpxData gpxData = new GpxData();
-      gpxData._gpx10 = new Gpx10.gpx();
-      gpxData._gpx10.author = "ralph.lessmann@googlemail.com";
-      gpxData._gpx10.wpt = lst.ToArray();
-      return gpxData;
-    }
-
-    [RequiresUnreferencedCode("Calls ForetrexToolbox.GpxData.ModifyElevation(gpxWpt)")]
-    public void ProcessWayPoints(int count, bool prefix, bool rating)
-    {
-      if (_gpx10 != null)
-      {
-        if (_gpx10.wpt.Length > count)
-        {
-          _gpx10.wpt = _gpx10.wpt.Where((val, idx) => (idx < count)).ToArray(); ;
-        }
-        if (prefix)
-        {
-          foreach (Gpx10.gpxWpt wpt in _gpx10.wpt)
-          {
-            if (wpt.name.StartsWith("GC", StringComparison.OrdinalIgnoreCase) && wpt.name.Length <= 7)
-            {
-              ModifyName(wpt);
-            }
-          }
-        }
-        if (rating)
-        {
-          foreach (Gpx10.gpxWpt wpt in _gpx10.wpt)
-          {
-            ModifyElevation(wpt);
-          }
-        }
-        foreach (Gpx10.gpxWpt wpt in _gpx10.wpt)
-        {
-          wpt.Any = null;
-        }
-      }
-    }
-
-    [RequiresUnreferencedCode("Calls ForetrexToolbox.GpxData.ToFile10(FileInfo)")]
+    [RequiresUnreferencedCode("Calls ForetrexToolbox.GPX.GpxData.ToFile10(FileInfo)")]
     public void ToFile(FileInfo? fi)
     {
       if(fi == null)
@@ -138,12 +76,12 @@ namespace ForetrexToolbox
         wpt.name = pre + wpt.name.Substring(2);
       }
     }
-    [RequiresUnreferencedCode("Calls ForetrexToolbox.GpxSerializer<T>.Deserialize(String)")]
+    [RequiresUnreferencedCode("Calls ForetrexToolbox.GPX.Serializer<T>.Deserialize(String)")]
     private static void ModifyElevation(Gpx10.gpxWpt wpt)
     {
       try
       {
-        GpxSerializer<Gpx10.cache> serializer = new GpxSerializer<Gpx10.cache>();
+        Serializer<Gpx10.cache> serializer = new Serializer<Gpx10.cache>();
         Gpx10.cache groundspeak = serializer.Deserialize(wpt.Any[0].OuterXml)!;
         int d = (int)(float.Parse(groundspeak.difficulty, CultureInfo.InvariantCulture) * 10.0);
         int t = (int)(float.Parse(groundspeak.terrain, CultureInfo.InvariantCulture) * 10.0);
@@ -156,10 +94,10 @@ namespace ForetrexToolbox
       }
     }
 
-    [RequiresUnreferencedCode("Calls ForetrexToolbox.GpxSerializer<T>.SerializeStream(T, Stream)")]
+    [RequiresUnreferencedCode("Calls ForetrexToolbox.GPX.Serializer<T>.SerializeStream(T, Stream)")]
     private void ToFile10(FileInfo fi)
     {
-      GpxSerializer<Gpx10.gpx> serializer10 = new GpxSerializer<Gpx10.gpx>();
+      Serializer<Gpx10.gpx> serializer10 = new Serializer<Gpx10.gpx>();
       serializer10.SerializeStream(_gpx10!, fi.Open(FileMode.Create, FileAccess.Write, FileShare.Write));
     }
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "fi")]

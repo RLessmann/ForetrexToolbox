@@ -1,19 +1,22 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ForetrexToolbox
+namespace ForetrexToolbox.KML
 {
-  class Airport
+  internal class KmlPoint
   {
-    internal Airport( string name, string iata, double lat, double lon, double ele)
+    public KmlPoint(string name, double lat, double lon, double ele)
     {
       Name = name;
-      Iata = iata;
       Latitude = lat;
       Longitude = lon;
       Elevation = ele;
     }
+
     public string Name { get; private set; }
-    public string Iata { get; private set; }
     public double Latitude { get; private set; }
     public double Longitude { get; private set; }
     public double Elevation { get; private set; }

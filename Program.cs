@@ -1,4 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using ForetrexToolbox.AIR;
+using ForetrexToolbox.GPX;
+using ForetrexToolbox.KML;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using System.Reflection;
 
@@ -15,7 +19,7 @@ namespace ForetrexToolbox
       Console.WriteLine(string.Format("ForetrexToolbox.exe <command> ..."));
       Console.WriteLine(string.Format("Commands:"));
       Console.WriteLine(string.Format("   airports"));
-      Console.WriteLine(string.Format("       --type=<comma seperated list, e.g.:small,medium,large>"));
+      Console.WriteLine(string.Format("       --types=<comma seperated list, e.g.:small,medium,large>"));
       Console.WriteLine(string.Format("       --continents=<comma seperated list, e.g.:EU,NA>"));
       Console.WriteLine(string.Format("       --output=<gpx file>"));
       Console.WriteLine(string.Format("Utility commands:"));
@@ -91,14 +95,14 @@ namespace ForetrexToolbox
     [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
     static void Main(string[] args)
     {
-      if( args.Length > 1 && args[0].Equals("airports", StringComparison.OrdinalIgnoreCase))
+      if (args.Length > 1 && args[0].Equals("airports", StringComparison.OrdinalIgnoreCase))
       {
         List<string> selectedAirports = new List<string>();
         List<string> selectedContinents = new List<string>();
         FileInfo? output = null;
         foreach (string arg in args)
         {
-          if (arg.StartsWith("--type=", StringComparison.OrdinalIgnoreCase))
+          if (arg.StartsWith("--types=", StringComparison.OrdinalIgnoreCase))
           {
             string[] items = arg.Substring(11).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string item in items)
@@ -106,10 +110,10 @@ namespace ForetrexToolbox
               selectedAirports.Add(item);
             }
           }
-          if ( arg.StartsWith("--continents=", StringComparison.OrdinalIgnoreCase))
+          if (arg.StartsWith("--continents=", StringComparison.OrdinalIgnoreCase))
           {
             string[] items = arg.Substring(13).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach(string item in items)
+            foreach (string item in items)
             {
               selectedContinents.Add(item);
             }
@@ -120,9 +124,33 @@ namespace ForetrexToolbox
           }
         }
         Airports airports = new Airports(400, selectedAirports, selectedContinents);
-        GpxData data = GpxData.FromList(airports.WayPoints);
+        GpxPoints data = GpxPoints.FromList(airports.WayPoints);
         data.ToFile(output);
-        Console.WriteLine( "Saved " + airports.WayPoints.Count + " airports to file " + output!.Name);
+        Console.WriteLine("Saved " + airports.WayPoints.Count + " airports to file " + output!.Name);
+        return;
+      }
+      if (args.Length > 1 && args[0].Equals("kmltrack-gpxroute", StringComparison.OrdinalIgnoreCase))
+      {
+        FileInfo? input = null;
+        foreach (string arg in args)
+        {
+          if (arg.StartsWith("--input=", StringComparison.OrdinalIgnoreCase))
+          {
+            input = new FileInfo(arg.Substring(8));
+          }
+        }
+        if (input != null)
+        {
+          KmlTracks track = new KmlTracks(input);
+          List<List<Gpx10.gpxRteRtept>> routes = track.Routes;
+          for (int i = 0; i < routes.Count; i++)
+          {
+            string name = input.Name.Substring(0, input.Name.Length-input.Extension.Length);
+            name = routes.Count == 1 ? name : name + i.ToString();
+            GpxRoute data = GpxRoute.FromList(name, routes[i]);
+            data.ToFile(new FileInfo(Path.Combine(input.Directory!.FullName, name + ".gpx")));
+          }
+        }
         return;
       }
       if (args.Length == 1 && args[0].Equals("version", StringComparison.OrdinalIgnoreCase))

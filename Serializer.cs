@@ -5,10 +5,10 @@ using System.Xml.Serialization;
 
 namespace ForetrexToolbox
 {
-  class KmlSerializer<T> : XmlSerializer
+  class Serializer<T> : XmlSerializer
   {
     [RequiresUnreferencedCode("Calls System.Xml.Serialization.XmlSerializer.XmlSerializer(Type)")]
-    public KmlSerializer()
+    public Serializer()
       : base(typeof(T))
     {
     }

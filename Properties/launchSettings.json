@@ -14,11 +14,15 @@
     },
     "airports 2": {
       "commandName": "Project",
-      "commandLineArgs": "airports --airports=large"
+      "commandLineArgs": "airports --types=large"
     },
     "airports 3": {
       "commandName": "Project",
-      "commandLineArgs": "airports --airports=large --continents=EU,NA --output=airports.gpx"
+      "commandLineArgs": "airports --types=large --continents=EU,NA --output=airports.gpx"
+    },
+    "kmltrack-gpxroute": {
+      "commandName": "Project",
+      "commandLineArgs": "kmltrack-gpxroute --input=C:\\Users\\ralles\\Downloads\\SFO-Milpitas.kml"
     }
   }
 }

@@ -28,11 +28,11 @@
   </Target>
 
   <ItemGroup>
-    <None Remove="Airports\Airports.csv" />
+    <None Remove="AIR\Airports.csv" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Airports\Airports.csv" />
+    <EmbeddedResource Include="AIR\Airports.csv" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,10 +40,6 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="GPX\" />
   </ItemGroup>
 
   <ItemGroup>

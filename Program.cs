@@ -104,7 +104,7 @@ namespace ForetrexToolbox
         {
           if (arg.StartsWith("--types=", StringComparison.OrdinalIgnoreCase))
           {
-            string[] items = arg.Substring(11).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] items = arg.Substring(8).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string item in items)
             {
               selectedAirports.Add(item);
@@ -150,6 +150,7 @@ namespace ForetrexToolbox
             name = routes.Count == 1 ? name : name + i.ToString();
             GpxRoute data = GpxRoute.FromList(name, routes[i]);
             data.ToFile(new FileInfo(Path.Combine(input.Directory!.FullName, name + ".gpx")));
+            Console.WriteLine("Saved route with " + routes[i].Count + " waypionts to file " + name + ".gpx");
           }
         }
         return;

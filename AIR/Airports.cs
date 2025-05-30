@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Reflection;
 
@@ -58,11 +59,12 @@ namespace ForetrexToolbox.AIR
     private void SelectAirports()
     {
       Clear();
-      using (Stream? stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ForetrexToolbox.Airports.Airports.csv"))
+      using (Stream? stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ForetrexToolbox.AIR.Airports.csv"))
       {
         if (stream == null)
         {
           string[] tmp = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+          Debugger.Break();
         }
         else
         { 
